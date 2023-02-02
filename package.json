@@ -1,0 +1,23 @@
+{
+  "name": "fullstack_8_graphql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kodtld/-FullStack_8_GraphQL.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kodtld/-FullStack_8_GraphQL/issues"
+  },
+  "homepage": "https://github.com/kodtld/-FullStack_8_GraphQL#readme",
+  "dependencies": {
+    "apollo-server": "^3.10.1",
+    "graphql": "^16.6.0"
+  }
+}

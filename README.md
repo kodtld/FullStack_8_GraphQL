@@ -1,1 +1,1 @@
-# -FullStack_8_GraphQL
+# FullStack_8_GraphQL

@@ -127,59 +127,56 @@ const typeDefs = gql`
       ):Authors
   }
     `
-const resolvers = {
-    
-    Query: {
-      bookCount: () => books.length,
-      authorCount: () => authors.length,
-      allBooks: (root,args) => {
-        if(args.author && args.genres){
-            return books.filter(p => p.genres.includes(args.genres) && p.author === args.author)
-        } 
-        else if(args.author) {
-            return books.filter(p => p.author === args.author)
-        } 
-        else if(args.genres){
-            return books.filter(p => p.genres.includes(args.genres))
-        } 
-        return books
+    const resolvers = {
+      Query: {
+        bookCount: () => books.length,
+        authorCount: () => authors.length,
+        allBooks: (root,args) => {
+          if(args.author && args.genres){
+              return books.filter(p => p.genres.includes(args.genres) && p.author === args.author)
+          } 
+          else if(args.author) {
+              return books.filter(p => p.author === args.author)
+          } 
+          else if(args.genres){
+              return books.filter(p => p.genres.includes(args.genres))
+          } 
+          return books
+        },
+        allAuthors: () => authors,
       },
-      allAuthors: () => authors,
-    },
-    
-    Authors: {
-      bookCount: (root) => {
-        const map = books.reduce((count, curr) => {
-            const author = curr.author;
-            count[author] = count[author] + 1 || 1;
-            return count
-        }, {})
-        const value = map[root.name]
-        return value
+      Mutation: {
+        addBook: (root, args) => {
+          const book = { ...args, id: uuid() }
+          books = books.concat(book)
+          const author = authors.find(a => a.name === args.author)
+          if (!author) {
+            const newAuthor = { name: args.author, id: uuid(), bookCount: 1 }
+            authors = authors.concat(newAuthor)
+          } else {
+            const updatedAuthor = { ...author, bookCount: author.bookCount + 1 }
+            authors = authors.map(a => a.name === args.author ? updatedAuthor : a)
+          }
+          return book
+        },
+        editAuthor: (root, args) => {
+          const author = authors.find(a => a.name === args.name)
+          if (!author) {
+            return null
+          }
+          const updatedAuthor = { ...author, born: args.setBornTo }
+          authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
+          return updatedAuthor
+        }
+      },
+      Books: {
+        author: (root) => root.author,
+      },
+      Authors: {
+        bookCount: (root) => books.filter(b => b.author === root.name).length,
+      },
     }
-  },
-    Mutation:{
-    addBook: (root,args) => {
-      const book = { ...args,id:uuid() }
-      books = books.concat(book)
-      if (!authors.includes(book.author)) {
-        authors = authors.concat({ name: book.author, id: uuid() })
-      }
-      return book
-    },
     
-    editAuthor: (root, args) => {
-        const author = authors.find(p => p.name === args.name);
-        if (!author) return null;
-      
-        const updatedAuthor = {...author, born: args.setBornTo};
-        authors = authors.map(p => p.name === args.name ? updatedAuthor : p);
-        return updatedAuthor;
-      }
-    },
-
-}
-
 const server = new ApolloServer({
   typeDefs,
   resolvers,
